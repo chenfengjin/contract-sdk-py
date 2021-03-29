@@ -1,5 +1,5 @@
 import os
-
+import sys
 import grpc
 from xuperchain.code_service import NativeCodeServicer
 from xuperchain.contract_service.contract_service_pb2_grpc import  add_NativeCodeServicer_to_server
@@ -7,7 +7,6 @@ import  xuperchain.contract_service.contract_service_pb2 as contract_service_pb2
 import threading
 from datetime import datetime
 from concurrent import futures
-from grpc_reflection.v1alpha import reflection
 
 
 class Driver():
@@ -23,6 +22,7 @@ class Driver():
         self.code_service = code_service
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
         add_NativeCodeServicer_to_server(servicer=code_service,server=server)
+        # from grpc_reflection.v1alpha import reflection
         # SERVICE_NAMES = (
         #     contract_service_pb2.DESCRIPTOR.services_by_name['NativeCode'].full_name,
         #     reflection.SERVICE_NAME,
@@ -32,7 +32,7 @@ class Driver():
         server.add_insecure_port('[::]:' + code_port)  # ipv4?
         server.start()
         # TODO
-        timer = threading.Timer(5,self.check_health)
+        timer = threading.Timer(1,self.check_health)
         timer.daemon=True
         timer.start()
         print("listen at {}".format(code_port))
@@ -42,9 +42,10 @@ class Driver():
         # TODO @fengjin
         print("check health")
         if (datetime.now()-self.code_service.lastPing).total_seconds() > 5:
-            os.abort()
-            
-            
+            os._exit(0)
+        timer = threading.Timer(1,self.check_health)
+        timer.daemon=True
+        timer.start()
             
             
             
