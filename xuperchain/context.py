@@ -93,7 +93,9 @@ class Context():
         self.stub.PostLog(req)
 
     def SetOutput(self,output):
-         contract__pb2.SetOutputRequest(header = self.header,resp = output)
+        resp = contract__pb2.SetOutputRequest(header = self.header,response = output)
+        self.stub.SetOutput(resp)
+
 
 class KVIterator():
     def __init__(self, start, stop, ctx: Context):

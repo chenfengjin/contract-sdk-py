@@ -17,17 +17,22 @@ class NativeCodeServicer(object):
         method = ctx.method
 
         if not hasattr(self.contract, method):
-            ctx.SetOutput("method {} not found".format(method))
+            # TODO body should be bytes
+            resp = contract_pb2.Response(status=500,message="method {} not found".format(method),body=None)
+            ctx.SetOutput(resp)
             return
         f = getattr(self.contract, method)
         #     check
         try:
-            out = f(ctx)
+            pass
+            # TODO Add things here
+            # out = f(ctx)
         except Exception as e:
             pass
-        ctx.set_output(out)
+        resp = contract_pb2.Response(status=500, message="method {} not found".format(method), body=None)
+        ctx.set_output(resp)
         # Return JSON
-        # return contract_pb2.NativeCallResponse
+        return contract_pb2.NativeCallResponse()
 
     def Ping(self, request, ctx):
         self.lastPing = datetime.now()

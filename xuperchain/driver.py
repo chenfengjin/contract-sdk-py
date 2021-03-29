@@ -22,12 +22,12 @@ class Driver():
         self.code_service = code_service
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
         add_NativeCodeServicer_to_server(servicer=code_service,server=server)
-        # from grpc_reflection.v1alpha import reflection
-        # SERVICE_NAMES = (
-        #     contract_service_pb2.DESCRIPTOR.services_by_name['NativeCode'].full_name,
-        #     reflection.SERVICE_NAME,
-        # )
-        # reflection.enable_server_reflection(SERVICE_NAMES, server)
+        from grpc_reflection.v1alpha import reflection
+        SERVICE_NAMES = (
+            contract_service_pb2.DESCRIPTOR.services_by_name['NativeCode'].full_name,
+            reflection.SERVICE_NAME,
+        )
+        reflection.enable_server_reflection(SERVICE_NAMES, server)
 
         server.add_insecure_port('[::]:' + code_port)  # ipv4?
         server.start()
@@ -41,8 +41,8 @@ class Driver():
     def check_health(self):
         # TODO @fengjin
         print("check health")
-        if (datetime.now()-self.code_service.lastPing).total_seconds() > 5:
-            os._exit(0)
+        # if (datetime.now()-self.code_service.lastPing).total_seconds() > 5:
+        #     os._exit(0)
         timer = threading.Timer(1,self.check_health)
         timer.daemon=True
         timer.start()
