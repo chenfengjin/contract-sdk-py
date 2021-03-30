@@ -1,9 +1,13 @@
 from xuperchain.context import Context
 from xuperchain.contract import contract_pb2
 from datetime import datetime
+from xuperchain.exception import XuperException
+
+
 class NativeCodeServicer(object):
     """service provided by chain code, called by xchain
     """
+
     def __init__(self, channel):
         self.contract = None
         self.lastPing = datetime.now()
@@ -17,21 +21,32 @@ class NativeCodeServicer(object):
         method = ctx.method
 
         if not hasattr(self.contract, method):
-            # TODO body should be bytes
-            resp = contract_pb2.Response(status=500,message="method {} not found".format(method),body=None)
+            resp = contract_pb2.Response(status=500, message="method {} not found".format(method), body=None)
             ctx.SetOutput(resp)
-            return
+            return contract_pb2.NativeCallResponse()
         f = getattr(self.contract, method)
         #     check
         try:
-            pass
-            # TODO Add things here
-            # out = f(ctx)
+            out = f(ctx)
+            if type(out) == type(""):
+                out = bytes(out,"UTF-8")
+
+            if not type(out) == type(bytes("","UTF-8")):
+                import json
+                out = json.dump(out)
+            resp = contract_pb2.Response(status=200, message=None,body= out)
+
+            ctx.SetOutput(resp)
+
         except Exception as e:
-            pass
-        resp = contract_pb2.Response(status=500, message="method {} not found".format(method), body=None)
-        ctx.set_output(resp)
-        # Return JSON
+            if isinstance(e, XuperException):
+                status = e.status
+                msg = e.msg
+            else:
+                status = 500
+                msg = str(e)[:1000]  # error message should not be longer than 1000, which may cause problems
+            resp = contract_pb2.Response(status=status, message=msg, body=None)
+            ctx.SetOutput(resp)
         return contract_pb2.NativeCallResponse()
 
     def Ping(self, request, ctx):

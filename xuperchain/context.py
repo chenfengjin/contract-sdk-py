@@ -1,5 +1,5 @@
-from xuperchain.contract_service.contract_service_pb2_grpc import SyscallStub
-from xuperchain.contract import contract_pb2 as contract__pb2
+from .contract_service.contract_service_pb2_grpc import SyscallStub
+from .contract import contract_pb2 as contract__pb2
 
 DEFAULT_CAP = 1024
 
@@ -29,6 +29,7 @@ class Context():
     def GetObject(self, key):
         req = contract__pb2.GetRequest(header=self.header, key=key)
         resp = self.stub.GetObject(req)
+        return resp.value
 
     def DeleteObject(self, key):
         req = contract__pb2.DeleteRequest(header=self.header, key=key)
@@ -54,10 +55,10 @@ class Context():
         return self.callArgs
 
     def Initiator(self):
-        return self.callArgs.initiator
+        return self.initiator
 
     def Caller(self):
-        return self.callArgs.initiator
+        return self.initiator
 
     def AuthRequire(self):
         self.callArgs.auth_require

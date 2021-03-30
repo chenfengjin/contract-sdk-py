@@ -1,8 +1,14 @@
 class XuperException():
     def __init__(self,msg=None):
-        self.code=599
-        self.msg=msg
+        self._code=500
+        self._msg=msg
 
+    @property
+    def status(self):
+        return self._code
+    @property
+    def msg(self):
+        return self._msg
 
 class ErrPermissionDenied(XuperException):
     pass
@@ -13,3 +19,4 @@ class MissingArgsException(XuperException):
 
 class ObjectNotFoundError(XuperException):
     pass
+
