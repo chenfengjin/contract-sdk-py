@@ -44,7 +44,7 @@ class NativeCodeServicer(object):
                 msg = e.msg
             else:
                 status = 500
-                msg = str(e)[:1000]  # error message should not be longer than 1000, which may cause problems
+                msg = "method:{},msg:{}".format(method,str(e)[:1000])  # error message should not be longer than 1000, which may cause problems
             resp = contract_pb2.Response(status=status, message=msg, body=None)
             ctx.SetOutput(resp)
         return contract_pb2.NativeCallResponse()

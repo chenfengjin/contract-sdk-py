@@ -12,29 +12,30 @@ class Counter():
         creator = ctx.Args().get("creator",None)
         if not creator:
             raise MissingArgsException
-        # ctx.PutObject("name", ctx.Initiator())
+        ctx.PutObject("name", ctx.Initiator())
         ctx.PutObject("creator",creator)
         return "ok"
 
     @contract_method
     def Increase(self, ctx: Context):
-        # name = ctx.GetObject("name")
-        # key = ctx.Args().get("key")
-        ctx.PutObject("name","1")
+        key = ctx.Args().get("key")
+        ctx.PutObject(key,"1")
         return "1"
 
     @contract_method
     def Get(self, ctx: Context):
-        name = ctx.GetObject("name")
+        key = ctx.Args().get("key")
+        name = ctx.GetObject(key)
         return name
 
     @contract_method
     def admin_method(self, ctx: Context):
-        admin = ctx.GetObject("admin")
-        caller = ctx.Initiator()
-        if not admin == caller:
-            raise ErrPermissionDenied
         pass
+    #     admin = ctx.GetObject("admin")
+    #     caller = ctx.Initiator()
+    #     if not admin == caller:
+    #         raise ErrPermissionDenied
+    #     pass
 
     # def Put(self, ctx: Context) -> Response:
     #     pass

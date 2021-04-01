@@ -17,11 +17,11 @@ function deploy() {
 Test("Increase", function (t) {
     var c = deploy();
 
-    var resp = c.Invoke("Increase", { "key": "xchain" });
+    var resp = c.Invoke("Increase", { "key": "key" });
     console.log(resp.Message)
     console.log(resp.Body)
     assert.equal(resp.Body, "1");
-        var resp = c.Invoke("Get",{"key":"xchain"})
+        var resp = c.Invoke("Get",{"key":"key"})
     assert.equal(resp.Body,"1")
     // var resp = c.Invoke("Increase", { "key": "xchain" });
     // assert.equal(resp.Body,"2")

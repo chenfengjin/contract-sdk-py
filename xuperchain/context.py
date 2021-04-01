@@ -17,9 +17,9 @@ class Context():
         self.transfer_amoubnt = resp.transfer_amount
 
         # TODO @fengjin
-        self.callArgs = contract__pb2.CallArgs
-        # for key, value in resp.args:
-        #     self.callArgs[key] = value
+        self.callArgs = {}
+        for item in resp.args:
+            self.callArgs[item.key]=item.value.decode()
         self.auth_require = resp.auth_require
 
     def PutObject(self, key, value):
@@ -52,6 +52,7 @@ class Context():
         return KVIterator(start=start, stop=stop)
 
     def Args(self):
+        # print(self.callArgs)
         return self.callArgs
 
     def Initiator(self):
