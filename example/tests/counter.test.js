@@ -23,10 +23,11 @@ Test("Increase", function (t) {
     assert.equal(resp.Body, "1");
         var resp = c.Invoke("Get",{"key":"key"})
     assert.equal(resp.Body,"1")
-    // var resp = c.Invoke("Increase", { "key": "xchain" });
-    // assert.equal(resp.Body,"2")
-
+    var resp = c.Invoke("Caller", { "key": "xchain" },{"account":"xchain"});
+    assert.equal(resp.Body,"xchain")
+    // console.log(resp.Body)
 })
+
 
 // Test("Get", function (t) {
 //     var c = deploy()

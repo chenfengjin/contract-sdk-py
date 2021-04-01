@@ -28,6 +28,12 @@ class Counter():
         name = ctx.GetObject(key)
         return name
 
+
+
+    def Caller(self,ctx:Context):
+        caller = ctx.Caller()
+        return caller
+
     @contract_method
     def admin_method(self, ctx: Context):
         pass
