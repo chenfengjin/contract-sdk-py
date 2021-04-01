@@ -33,7 +33,8 @@ class NativeCodeServicer(object):
 
             if not type(out) == type(bytes("","UTF-8")):
                 import json
-                out = json.dump(out)
+                # TODO @fegjin
+                out = json.dumps(out).encode()
             resp = contract_pb2.Response(status=200, message=None,body= out)
 
             ctx.SetOutput(resp)

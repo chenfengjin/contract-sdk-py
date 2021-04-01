@@ -1,7 +1,7 @@
 from xuperchain.context import Context
 from xuperchain.driver import Driver
 from xuperchain.contract_method import contract_method
-from xuperchain.exception import MissingArgsException, ObjectNotFoundError, ErrPermissionDenied,XuperException
+from xuperchain.exception import MissingArgsException, ObjectNotFoundError, ErrPermissionDenied, XuperException
 
 
 class Counter():
@@ -9,17 +9,17 @@ class Counter():
     @contract_method
     def initialize(self, ctx: Context):
         # TODO default value?
-        creator = ctx.Args().get("creator",None)
+        creator = ctx.Args().get("creator", None)
         if not creator:
             raise MissingArgsException
         ctx.PutObject("name", ctx.Initiator())
-        ctx.PutObject("creator",creator)
+        ctx.PutObject("creator", creator)
         return "ok"
 
     @contract_method
     def Increase(self, ctx: Context):
         key = ctx.Args().get("key")
-        ctx.PutObject(key,"1")
+        ctx.PutObject(key, "1")
         return "1"
 
     @contract_method
@@ -28,15 +28,14 @@ class Counter():
         name = ctx.GetObject(key)
         return name
 
-
-
-    def Caller(self,ctx:Context):
+    def Caller(self, ctx: Context):
         caller = ctx.Caller()
         return caller
 
     @contract_method
     def admin_method(self, ctx: Context):
         pass
+
     #     admin = ctx.GetObject("admin")
     #     caller = ctx.Initiator()
     #     if not admin == caller:
@@ -69,15 +68,18 @@ class Counter():
     # # return Response(json={"status": "ok", "id": 1000})
     # # return Response(body=b"binady object")
 
-    def list(self, ctx: Context):
-        pass
-        # prefix = ctx.Args().get("prefix", None)
-        # if prefix is None:
-        #     raise MissingArgsException
-        # result = [key for key, _ in ctx.NewIterator(prefix=prefix)]
-        #
-        # return Response(json=result)
-
+    def List(self, ctx: Context):
+        start = ctx.Args().get("start")
+        limit = ctx.Args().get("limit")
+        if start is None or limit is None:
+            raise MissingArgsException
+        iterator = ctx.Iterator(start=start, limit=limit)
+        return [
+            {
+                "key": key,
+                "value": value
+            }
+            for key, value in iterator]
 
 if __name__ == "__main__":
     # 这里传递类还是传递变量?

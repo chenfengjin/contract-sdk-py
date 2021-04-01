@@ -45,11 +45,11 @@ class Context():
         resp = self.stub.QueryBlock(req)
         return resp.block
 
-    def Intertor(self, start=None, stop=None, prefix=None):
+    def Iterator(self, start, limit, prefix=None):
         if prefix:
             start = prefix
             stop = prefix + "~"
-        return KVIterator(start=start, stop=stop)
+        return KVIterator(start=start, limit=limit,ctx=self)
 
     def Args(self):
         # print(self.callArgs)
@@ -100,29 +100,36 @@ class Context():
 
 
 class KVIterator():
-    def __init__(self, start, stop, ctx: Context):
+    def __init__(self, start, limit, ctx: Context):
         self.start = start
-        self.stop = stop
+        self.limit = limit
         self.ctx = ctx
         self.idx = 0
         self.items = None
+        self.newStart = None
         self._load()
 
     def __next__(self):
         if self.idx == len(self.items):
-            self.items = None
-            self.idx = 0
-            try:
-                self._load()
-            except StopIteration as e:
-                # TODO  resource release here
-                raise StopIteration()
+            raise StopIteration()
+        #     self.items = None
+        #     self.idx = 0
+        #     try:
+        #         self._load()
+        #     except StopIteration as e:
+        #         TODO  resource release here
+                # raise StopIteration()
         item = self.items[self.idx]
+        self.idx += 1
+        # self.start = self.items[-1].value
 
-        return item.key, item.value
+        return item.key.decode(), item.value.decode()
+
+    def __iter__(self):
+        return self
 
     def _load(self):
-        req = contract__pb2.IteratorRequest(header=self.ctx.header, start=self.start, limit=self.limit, cap=DEFAULT_CAP)
+        req = contract__pb2.IteratorRequest(header=self.ctx.header, start=self.start.encode(), limit=self.limit.encode(), cap=DEFAULT_CAP)
         resp = self.ctx.stub.NewIterator(req)
         if len(resp.items) == 0:
             raise StopIteration()

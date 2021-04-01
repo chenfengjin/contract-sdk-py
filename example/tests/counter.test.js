@@ -13,21 +13,32 @@ function deploy() {
         init_args: { "creator": "xchain" }
     });
 }
+//
+// Test("Increase", function (t) {
+//     var c = deploy();
+//
+//     var resp = c.Invoke("Increase", { "key": "key" });
+//     console.log(resp.Message)
+//     console.log(resp.Body)
+//     assert.equal(resp.Body, "1");
+//     var resp = c.Invoke("Get",{"key":"key"})
+//     assert.equal(resp.Body,"1")
+//     var resp = c.Invoke("Caller", { "key": "xchain" },{"account":"xchain"});
+//     assert.equal(resp.Body,"xchain")
+//     // console.log(resp.Body)
+// })
 
-Test("Increase", function (t) {
+
+Test("Iterator",function (t) {
     var c = deploy();
-
-    var resp = c.Invoke("Increase", { "key": "key" });
-    console.log(resp.Message)
+    c.Invoke("Increase",{"key":"key1"})
+    c.Invoke("Increase",{"key":"key2"})
+    c.Invoke("Increase",{"key":"key3"})
+    c.Invoke("Increase",{"key":"key4"})
+    var resp = c.Invoke("List",{"start":"key2","limit":"key4"})
     console.log(resp.Body)
-    assert.equal(resp.Body, "1");
-        var resp = c.Invoke("Get",{"key":"key"})
-    assert.equal(resp.Body,"1")
-    var resp = c.Invoke("Caller", { "key": "xchain" },{"account":"xchain"});
-    assert.equal(resp.Body,"xchain")
-    // console.log(resp.Body)
+    console.log(resp.Message)
 })
-
 
 // Test("Get", function (t) {
 //     var c = deploy()
