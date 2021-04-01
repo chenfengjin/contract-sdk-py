@@ -1,1 +1,1 @@
-
+from xuperchain.contract_method import contract_method

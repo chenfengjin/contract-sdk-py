@@ -50,8 +50,9 @@ class Driver():
     def check_health(self):
         # TODO @fengjin
         print("check health")
-        # if (datetime.now()-self.code_service.lastPing).total_seconds() > 5:
-        #     os._exit(0)
+        if (datetime.now()-self.code_service.lastPing).total_seconds() > 5: # TODO
+            print("loss ping from xchian,exit")
+            os._exit(0)
         timer = threading.Timer(1,self.check_health)
         timer.daemon=True
         timer.start()
