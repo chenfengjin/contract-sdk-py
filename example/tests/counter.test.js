@@ -29,17 +29,32 @@ function deploy() {
 // })
 
 
-Test("Iterator",function (t) {
+// Test("Iterator",function (t) {
+//     var c = deploy();
+//     c.Invoke("Increase",{"key":"key1"})
+//     c.Invoke("Increase",{"key":"key2"})
+//     c.Invoke("Increase",{"key":"key3"})
+//     c.Invoke("Increase",{"key":"key4"})
+//     var resp = c.Invoke("RangeList",{"start":"key2","limit":"key4"})
+//     console.log(resp.Body)
+//     console.log(resp.Message)
+// })
+
+
+Test("PrefixIterator",function (t) {
     var c = deploy();
     c.Invoke("Increase",{"key":"key1"})
     c.Invoke("Increase",{"key":"key2"})
     c.Invoke("Increase",{"key":"key3"})
     c.Invoke("Increase",{"key":"key4"})
-    var resp = c.Invoke("List",{"start":"key2","limit":"key4"})
+    c.Invoke("Increase",{"key":"keyy"})
+    c.Invoke("Increase",{"key":"kew"})
+
+    var resp = c.Invoke("PrefixList",{"prefix":"key"})
+
     console.log(resp.Body)
     console.log(resp.Message)
 })
-
 // Test("Get", function (t) {
 //     var c = deploy()
 //     c.Invoke("Increase", { "key": "xchain" });

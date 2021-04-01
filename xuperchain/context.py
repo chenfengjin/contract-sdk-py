@@ -45,10 +45,10 @@ class Context():
         resp = self.stub.QueryBlock(req)
         return resp.block
 
-    def Iterator(self, start, limit, prefix=None):
+    def Iterator(self, start=None, limit=None, prefix=None):
         if prefix:
             start = prefix
-            stop = prefix + "~"
+            limit = prefix + "~"
         return KVIterator(start=start, limit=limit,ctx=self)
 
     def Args(self):

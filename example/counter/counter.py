@@ -81,6 +81,18 @@ class Counter():
             }
             for key, value in iterator]
 
+    def PrefixList(self,ctx:Context):
+        prefix = ctx.Args().get("prefix")
+        if not prefix:
+            raise MissingArgsException
+        iterator = ctx.Iterator(prefix = prefix)
+        return [
+            {
+                "key": key,
+                "value": value
+            }
+            for key, value in iterator]
+
 if __name__ == "__main__":
     # 这里传递类还是传递变量?
     Driver().serve(Counter())
