@@ -64,8 +64,8 @@ Test("C2",function (t) {
         type: type,
         init_args: { "creator": "xchain" }
     });
-        resp = c2.Invoke("invoke",{})
-        console.log(resp.Body)
+        // resp = c2.Invoke("invoke",{})
+        // console.log(resp.Body)
 
         c1 =  xchain.Deploy({
         name: "c1",
@@ -75,7 +75,7 @@ Test("C2",function (t) {
         init_args: { "creator": "xchain" }
     });
         var resp = c1.Invoke("invoke",{"contract":"c2"})
-    console.log(resp.Body)
-    console.log(resp.Message)
-    console.log(resp.Status)
+    console.log("from c1:"+resp.Body)
+    // console.log(resp.Message)
+    // console.log(resp.Status)
 })

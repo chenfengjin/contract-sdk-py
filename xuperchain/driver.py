@@ -44,12 +44,12 @@ class Driver():
         # timer.daemon=True
         # timer.start()
         self.check_health()
-        print("listen at {}".format(code_port))
+        # print("listen at {}".format(code_port))
         server.wait_for_termination()
 
     def check_health(self):
         # TODO @fengjin
-        print("check health")
+        # print("check_health")
         if (datetime.now()-self.code_service.lastPing).total_seconds() > 5: # TODO
             print("loss ping from xchian,exit")
             os._exit(0)
