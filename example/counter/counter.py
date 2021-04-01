@@ -1,20 +1,36 @@
 from xuperchain.context import Context
 from xuperchain.driver import Driver
-from xuperchain.exception import MissingArgsException, ObjectNotFoundError, ErrPermissionDenied
-from example.utils import hello
+from xuperchain.contract_method import contract_method
+from xuperchain.exception import MissingArgsException, ObjectNotFoundError, ErrPermissionDenied,XuperException
 
 
 class Counter():
 
+    @contract_method
     def initialize(self, ctx: Context):
-        ctx.PutObject(bytes("name", "utf-8"), ctx.Initiator())
+        # TODO default value?
+        creator = ctx.Args().get("creator",None)
+        if not creator:
+            raise MissingArgsException
+        # ctx.PutObject("name", ctx.Initiator())
+        ctx.PutObject("creator",creator)
         return "ok"
 
-    def getname(self, ctx: Context):
-        name = ctx.GetObject(bytes("name", 'utf-8'))
+    @contract_method
+    def Increase(self, ctx: Context):
+        # name = ctx.GetObject("name")
+        # key = ctx.Args().get("key")
+        # "100"
+        # ctx.PutObject("name","1")
+        return "1"
 
+    @contract_method
+    def Get(self, ctx: Context):
+        key = ctx.Args().get("key")
+        name = ctx.GetObject(key)
         return name
 
+    @contract_method
     def admin_method(self, ctx: Context):
         admin = ctx.GetObject("admin")
         caller = ctx.Initiator()

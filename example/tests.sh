@@ -1,0 +1,1 @@
+xdev test tests/counter.test.js
