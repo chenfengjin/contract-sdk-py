@@ -16,14 +16,16 @@ function deploy() {
 
 Test("Increase", function (t) {
     var c = deploy();
+
     var resp = c.Invoke("Increase", { "key": "xchain" });
     console.log(resp.Message)
     console.log(resp.Body)
-    // assert.equal(resp.Body, "1");
+    assert.equal(resp.Body, "1");
+        var resp = c.Invoke("Get",{"key":"xchain"})
+    assert.equal(resp.Body,"1")
     // var resp = c.Invoke("Increase", { "key": "xchain" });
     // assert.equal(resp.Body,"2")
-    // var resp = c.Invoke("Get",{"key":"xchain"})
-    // assert.equal(resp.Body,"2")
+
 })
 
 // Test("Get", function (t) {

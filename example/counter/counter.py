@@ -20,14 +20,12 @@ class Counter():
     def Increase(self, ctx: Context):
         # name = ctx.GetObject("name")
         # key = ctx.Args().get("key")
-        # "100"
-        # ctx.PutObject("name","1")
+        ctx.PutObject("name","1")
         return "1"
 
     @contract_method
     def Get(self, ctx: Context):
-        key = ctx.Args().get("key")
-        name = ctx.GetObject(key)
+        name = ctx.GetObject("name")
         return name
 
     @contract_method
