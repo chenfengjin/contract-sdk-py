@@ -34,6 +34,7 @@ class Counter():
         name = ctx.GetObject(key)
         return name
 
+    @contract_method
     def Caller(self, ctx: Context):
         caller = ctx.Caller()
         return caller
