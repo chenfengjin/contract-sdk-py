@@ -19,7 +19,7 @@ class Context():
         # TODO @fengjin
         self.callArgs = {}
         for item in resp.args:
-            self.callArgs[item.key]=item.value.decode()
+            self.callArgs[item.key] = item.value.decode()
         self.auth_require = resp.auth_require
 
     def PutObject(self, key, value):
@@ -49,10 +49,9 @@ class Context():
         if prefix:
             start = prefix
             limit = prefix + "~"
-        return KVIterator(start=start, limit=limit,ctx=self)
+        return KVIterator(start=start, limit=limit, ctx=self)
 
     def Args(self):
-        # print(self.callArgs)
         return self.callArgs
 
     def Initiator(self):
@@ -74,7 +73,8 @@ class Context():
 
     def Call(self, module, contract, method, args):
         args = [contract__pb2.ArgPair(key=key, value=value) for key, value in args.items()]
-        req = contract__pb2.ContractCallRequest(header=self.header,contract=contract,module=module, method=method, args=args)
+        req = contract__pb2.ContractCallRequest(header=self.header, contract=contract, module=module, method=method,
+                                                args=args)
         resp = self.stub.ContractCall(req)
         return resp.response
 
@@ -83,17 +83,27 @@ class Context():
         req = contract__pb2.CrossContractQueryRequest(header=self.header, uri=uri, args=argsPair)
         resp = self.stub.CrossContractQuery(req)
 
-    def EmitEvent(self, name, body, json=None):
-        req = contract__pb2.EmitEventRequest(header=self.header, name=name, body=body)
-        resp = self.stub.EmitEvent(req)
-
-    # def EmitJSONEvent(self):
-    #     pass
-
-    def Logf(self, entry):
+    def EmitEvent(self, name, body):
         # TODO
+        req = contract__pb2.EmitEventRequest(header=self.header, name=name, body=body)
+        self.stub.EmitEvent(req)
+
+    def Log(self, msg, *args, **kwargs):
+        # TODO add args and kwargs
+        import logging
+        import io
+        # TODO 级别,位置，代码风格
+        log_capture_string = io.StringIO()
+        ch = logging.StreamHandler(log_capture_string)
+        logger = logging.getLogger('root')
+        logger.addHandler(ch)
+        logger.error(msg, *args, **kwargs)
+        entry = log_capture_string.getvalue()
+        log_capture_string.close()
+        print("entry:",entry)
         req = contract__pb2.PostLogRequest(header=self.header, entry=entry)
-        self.stub.PostLog(req)
+        # PostLog has response, but we just ignore it
+        _ = self.stub.PostLog(req)
 
     def SetOutput(self, output):
         resp = contract__pb2.SetOutputRequest(header=self.header, response=output)
@@ -119,7 +129,7 @@ class KVIterator():
         #         self._load()
         #     except StopIteration as e:
         #         TODO  resource release here
-                # raise StopIteration()
+        # raise StopIteration()
         item = self.items[self.idx]
         self.idx += 1
         # self.start = self.items[-1].value
@@ -130,7 +140,8 @@ class KVIterator():
         return self
 
     def _load(self):
-        req = contract__pb2.IteratorRequest(header=self.ctx.header, start=self.start.encode(), limit=self.limit.encode(), cap=DEFAULT_CAP)
+        req = contract__pb2.IteratorRequest(header=self.ctx.header, start=self.start.encode(),
+                                            limit=self.limit.encode(), cap=DEFAULT_CAP)
         resp = self.ctx.stub.NewIterator(req)
         if len(resp.items) == 0:
             raise StopIteration()

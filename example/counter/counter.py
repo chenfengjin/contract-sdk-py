@@ -23,6 +23,12 @@ class Counter():
         return "1"
 
     @contract_method
+    def Delete(self,ctx:Context):
+        key = ctx.Args().get("key")
+        ctx.DeleteObject(key)
+        ctx.Log("delete")
+
+    @contract_method
     def Get(self, ctx: Context):
         key = ctx.Args().get("key")
         name = ctx.GetObject(key)
