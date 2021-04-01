@@ -73,9 +73,10 @@ class Context():
         pass
 
     def Call(self, module, contract, method, args):
-        argsPair = [contract__pb2.ArgPair(key=key, value=value) for key, value in args.items()]
-        req = contract__pb2.ContractCallRequest(header=self.header, module=module, method=method, args=argsPair)
+        args = [contract__pb2.ArgPair(key=key, value=value) for key, value in args.items()]
+        req = contract__pb2.ContractCallRequest(header=self.header,contract=contract,module=module, method=method, args=args)
         resp = self.stub.ContractCall(req)
+        return resp.response
 
     def CrossQuery(self, uri, args):
         argsPair = [contract__pb2.ArgPair(key=key, value=value) for key, value in args.items()]

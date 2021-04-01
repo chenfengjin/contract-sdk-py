@@ -3,6 +3,7 @@ from xuperchain.contract import contract_pb2
 from datetime import datetime
 from xuperchain.exception import XuperException
 
+import logging
 
 class NativeCodeServicer(object):
     """service provided by chain code, called by xchain
@@ -29,7 +30,7 @@ class NativeCodeServicer(object):
         try:
             out = f(ctx)
             if type(out) == type(""):
-                out = bytes(out,"UTF-8")
+                out = out.encode()
 
             if not type(out) == type(bytes("","UTF-8")):
                 import json
@@ -41,11 +42,13 @@ class NativeCodeServicer(object):
 
         except Exception as e:
             if isinstance(e, XuperException):
-                status = e.status
+                status = 501
                 msg = e.msg
             else:
-                status = 500
-                msg = "method:{},msg:{}".format(method,str(e)[:1000])  # error message should not be longer than 1000, which may cause problems
+                status = 502
+
+                logging.exception(e)
+                msg = "method:{},msg:{}".format(method,str(e))  # error message should not be longer than 1000, which may cause problems
             resp = contract_pb2.Response(status=status, message=msg, body=None)
             ctx.SetOutput(resp)
         return contract_pb2.NativeCallResponse()
