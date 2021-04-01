@@ -38,7 +38,7 @@ class Counter():
         caller = ctx.Caller()
         return caller
 
-    @contract_method
+    # @contract_method
     def admin_method(self, ctx: Context):
         pass
 
@@ -73,7 +73,7 @@ class Counter():
     # return Response(msg="ok")
     # # return Response(json={"status": "ok", "id": 1000})
     # # return Response(body=b"binady object")
-
+    @contract_method
     def List(self, ctx: Context):
         start = ctx.Args().get("start")
         limit = ctx.Args().get("limit")
@@ -87,6 +87,7 @@ class Counter():
             }
             for key, value in iterator]
 
+    @contract_method
     def PrefixList(self,ctx:Context):
         prefix = ctx.Args().get("prefix")
         if not prefix:

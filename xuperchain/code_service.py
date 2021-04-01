@@ -8,7 +8,6 @@ import logging
 class NativeCodeServicer(object):
     """service provided by chain code, called by xchain
     """
-
     def __init__(self, channel):
         self.contract = None
         self.lastPing = datetime.now()
@@ -20,13 +19,17 @@ class NativeCodeServicer(object):
         ctx = Context(ctxid=ctxid, channel=self.channel)
 
         method = ctx.method
+        found = True
 
         if not hasattr(self.contract, method):
+            found = False
+        f = getattr(self.contract, method)
+        if not f.__name__=="contract_method_wraper":
+            found = False
+        if not found:
             resp = contract_pb2.Response(status=500, message="method {} not found".format(method), body=None)
             ctx.SetOutput(resp)
             return contract_pb2.NativeCallResponse()
-        f = getattr(self.contract, method)
-        #     check
         try:
             out = f(ctx)
             if type(out) == type(""):
