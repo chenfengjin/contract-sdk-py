@@ -53,10 +53,14 @@ class Driver():
         if (datetime.now()-self.code_service.lastPing).total_seconds() > 5: # TODO
             print("loss ping from xchian,exit")
             os._exit(0)
+
+        #  TODO @fengjin
+        #   递归可能导致栈溢出
+        # 线程回收
+        # 尾递归优化？
         timer = threading.Timer(1,self.check_health)
         timer.daemon=True
         timer.start()
             
-            
-            
+
             
