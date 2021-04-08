@@ -16,10 +16,10 @@ class Context():
         self.initiator = resp.initiator
         self.transfer_amoubnt = resp.transfer_amount
 
-        # TODO @fengjin
         self.callArgs = {}
         for item in resp.args:
             self.callArgs[item.key] = item.value.decode()
+
         self.auth_require = resp.auth_require
 
     def PutObject(self, key, value):
@@ -29,6 +29,7 @@ class Context():
     def GetObject(self, key: str):
         req = contract__pb2.GetRequest(header=self.header, key=key.encode())
         resp = self.stub.GetObject(req)
+        # what if value is None
         return resp.value.decode()
 
     def DeleteObject(self, key):
@@ -44,12 +45,6 @@ class Context():
         req = contract__pb2.QueryBlockRequest(header=self.header, blockid=blockid)
         resp = self.stub.QueryBlock(req)
         return resp.block
-
-    def Iterator(self, start=None, limit=None, prefix=None):
-        if prefix:
-            start = prefix
-            limit = prefix + "~"
-        return KVIterator(start=start, limit=limit, ctx=self)
 
     def Args(self):
         return self.callArgs
@@ -67,9 +62,6 @@ class Context():
         req = contract__pb2.TransferRequest(header=self.header, to=to, amount=amount)
         resp = self.stub.Transfer(req)
 
-    def TransferAmount(self):
-        # TODO
-        pass
 
     def Call(self, module, contract, method, args):
         args = [contract__pb2.ArgPair(key=key, value=value) for key, value in args.items()]
@@ -78,21 +70,10 @@ class Context():
         resp = self.stub.ContractCall(req)
         return resp.response
 
-    def CrossQuery(self, uri, args):
-        argsPair = [contract__pb2.ArgPair(key=key, value=value) for key, value in args.items()]
-        req = contract__pb2.CrossContractQueryRequest(header=self.header, uri=uri, args=argsPair)
-        resp = self.stub.CrossContractQuery(req)
-
-    def EmitEvent(self, name, body):
-        # TODO
-        req = contract__pb2.EmitEventRequest(header=self.header, name=name, body=body)
-        self.stub.EmitEvent(req)
 
     def Log(self, msg, *args, **kwargs):
-        # TODO add args and kwargs
         import logging
         import io
-        # TODO 级别,位置，代码风格
         log_capture_string = io.StringIO()
         ch = logging.StreamHandler(log_capture_string)
         logger = logging.getLogger('root')
@@ -100,7 +81,6 @@ class Context():
         logger.error(msg, *args, **kwargs)
         entry = log_capture_string.getvalue()
         log_capture_string.close()
-        print("entry:",entry)
         req = contract__pb2.PostLogRequest(header=self.header, entry=entry)
         # PostLog has response, but we just ignore it
         _ = self.stub.PostLog(req)
@@ -108,42 +88,3 @@ class Context():
     def SetOutput(self, output):
         resp = contract__pb2.SetOutputRequest(header=self.header, response=output)
         self.stub.SetOutput(resp)
-
-
-class KVIterator():
-    def __init__(self, start, limit, ctx: Context):
-        self.start = start
-        self.limit = limit
-        self.ctx = ctx
-        self.idx = 0
-        self.items = None
-        self.newStart = None
-        self._load()
-
-    def __next__(self):
-        if self.idx == len(self.items):
-            raise StopIteration()
-        #     self.items = None
-        #     self.idx = 0
-        #     try:
-        #         self._load()
-        #     except StopIteration as e:
-        #         TODO  resource release here
-        # raise StopIteration()
-        item = self.items[self.idx]
-        self.idx += 1
-        # self.start = self.items[-1].value
-
-        return item.key.decode(), item.value.decode()
-
-    def __iter__(self):
-        return self
-
-    def _load(self):
-        req = contract__pb2.IteratorRequest(header=self.ctx.header, start=self.start.encode(),
-                                            limit=self.limit.encode(), cap=DEFAULT_CAP)
-        resp = self.ctx.stub.NewIterator(req)
-        if len(resp.items) == 0:
-            raise StopIteration()
-
-        self.items = resp.items

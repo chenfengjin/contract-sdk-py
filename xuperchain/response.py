@@ -1,21 +1,13 @@
-class BaseResponse():
-    def __init__(self):
-        # TODO raie exception
-        pass
+class Response:
+    def __init__(self, status, msg="", body=""):
+        self.status = status
+        self.msg = msg
+        self.body = body
 
-    @property
-    def code(self):
-        return self.code
+    @staticmethod
+    def ok(body):
+        return Response(status=200, body=body)
 
-    @property
-    def msg(self):
-        return self.msg
-
-class MissingParameterResponse():
-    pass
-
-class PermissionDeniedResponse():
-    pass
-
-class ParameterValidateFailedResponse():
-    pass
+    @staticmethod
+    def error(msg):
+        return Response(status=500, body=msg)
