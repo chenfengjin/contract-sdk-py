@@ -31,6 +31,9 @@ class Features():
         block = ctx.QueryBlock(blockid=blockid)
         return Response.ok(block.pre_hash)
 
+    @contract_method
+    def Version(self,ctx:Context):
+        return Response.ok("v2")
 
 if __name__ == "__main__":
     Driver().serve(Features())
