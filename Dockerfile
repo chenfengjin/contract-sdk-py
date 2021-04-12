@@ -10,9 +10,14 @@ RUN bash gvm-installer
 #RUN bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 #RUN bash -c "bash < <(curl -s -S -L https:// raw.staticdn.net/moovweb/gvm/master/binscripts/gvm-installer)"
 
-RUN bash -c "source /root/.gvm/scripts/gvm && gvm install go1.13 && gvm use go1.13"
+RUN wget https://dl.google.com/go/go1.13.9.linux-amd64.tar.gz
+RUN tar xvf go1.13.9.linux-amd64.tar.gz
+ENV PATH="/go/bin:${PATH}"
+ENV GOROOT="/go"
+
 RUN git clone https://hub.fastgit.org/xuperchain/xuperchain.git
-RUN bash -c "cd xuperchain && source /root/.gvm/scripts/gvm && gvm use go1.13 &&  GOPROXY=goproxy.cn make"
+RUN bash -c "cd xuperchain && make "
+
 RUN cd /contract-sdk-py && python3 setup.py install
 RUN apt install -y vim
 
