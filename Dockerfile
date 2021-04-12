@@ -16,7 +16,7 @@ ENV PATH="/go/bin:${PATH}"
 ENV GOROOT="/go"
 
 RUN git clone https://hub.fastgit.org/xuperchain/xuperchain.git
-RUN bash -c "cd xuperchain && make "
+RUN bash -c "cd xuperchain && GOPROXY=goproxy.cn make "
 
 RUN cd /contract-sdk-py && python3 setup.py install
 RUN apt install -y vim
