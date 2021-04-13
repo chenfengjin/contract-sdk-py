@@ -30,4 +30,4 @@ CMD ./xchain
 #RUN ./xchain-cli account new --account 1111111111111111 --fee 2000000000000 && ./xchain-cli transfer --to XC1111111111111111@xuper --amount 10000000000000000
 #RUN ./xchain-cli native deploy --account XC1111111111111111@xuper  -a '{"creator":"xchain"}' --fee 15587517 --runtime py  --cname counter ../../contract-sdk-py/example/counter/counter.py
 
-#RUN ./xchain-cli native invoke --method Increase -a '{"key":"xchain"}' features --fee 1
+#RUN ./xchain-cli native invoke --method Increase -a '{"key":"xchain"}' counter --fee 1
