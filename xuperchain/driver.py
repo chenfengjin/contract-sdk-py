@@ -27,7 +27,7 @@ class Driver():
         code_service.SetContract(contract=contract)
         self.code_service = code_service
 
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+        server = grpc.server(futures.ThreadPoolExecutor(max_workers=100))
         contract_service_pb2_grpc.add_NativeCodeServicer_to_server(
             servicer=code_service, server=server)
 
